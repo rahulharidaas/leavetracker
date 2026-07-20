@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR TOOLS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'accounts/css/style.css' %}">
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div class="navbar">
+        <div class="logo">
+            <div class="logo-top">HR</div>
+            <div class="logo-bottom">TOOLS</div>
+        </div>
+    </div>
+
+    <!-- Main -->
+    <div class="main">
+        <h1 class="welcome-title">Welcome</h1>
+
+        <div class="login-card">
+            <h2>Login</h2>
+
+            <form method="POST" action="" autocomplete="off">
+                {% csrf_token %}
+
+                <input type="text" id="username" name="username" placeholder="Email *" autocomplete="off" required>
+
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" placeholder="Password *" autocomplete="off" required>
+                    <span class="eye-icon" onclick="togglePassword()">&#128065;</span>
+                </div>
+
+                <a class="forgot-link">Forgot Password</a>
+
+                <button type="submit" class="btn-login">Login</button>
+
+                {% if message %}
+                    <p class="message">{{ message }}</p>
+                {% endif %}
+
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-links">
+            <a href="#">Terms And Conditions</a> |
+            <a href="#">Privacy Policy</a>
+        </div>
+        <div class="footer-copy">Copyright &copy; 2026 HR Tools</div>
+    </div>
+
+    <script>
+        function togglePassword() {
+            var input = document.getElementById('password');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+    </script>
+
+</body>
+</html>
