@@ -8,9 +8,9 @@
     <div class="section-label">Main Menu</div>
     <a href="{% url 'admin_dashboard' %}">📊 Dashboard</a>
     <a href="{% url 'admin_employees' %}" class="active">👥 Employees</a>
-    <a href="{% url 'admin_settings' %}">🏢 Departments</a>
+    <a href="{% url 'admin_department' %}">🏢 Departments</a>
     <a href="#">📅 Leave Requests</a>
-    <a href="#">⚙️ Settings</a>
+    <a href="{% url 'admin_settings' %}">⚙️ Settings</a>
 {% endblock %}
 
 {% block content %}
