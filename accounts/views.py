@@ -7,6 +7,7 @@ import uuid
 from django.utils import timezone
 from datetime import timedelta
 from django.core.mail import send_mail
+from django.db.models import Count
 
 
 # Create your views here.
@@ -70,14 +71,30 @@ def superadmin_companies(request):
         )
         invite_link = f"http://127.0.0.1:8000/accounts/signup/{token}/"
         send_mail(
-            'You are invited to Join Leave Tracker',
-            f'Click the link to sign up: {invite_link}',
-            'rahulharidaas@gmail.com',
-            [email],
+            subject='You are invited to Join Leave Tracker',
+            message='Click the link to sign up.',
+            from_email='rahulharidaas@gmail.com',
+            recipient_list=[email],
+            html_message=f'''
+            <div style="font-family:Arial; max-width:480px; margin:auto; padding:32px; text-align:center">
+                <h2>You are Invited!</h2>
+                <p>You have been invited to join <strong>Leave Tracker</strong>.</p>
+                <p>Click the button below to create your account:</p>
+                <a href="{invite_link}"
+                   style="display:inline-block; padding:14px 28px; background:#1a1a1a;
+                          color:white; text-decoration:none; border-radius:50px;
+                          font-weight:600; margin-top:16px;">
+                    JOIN
+                </a>
+                <p style="margin-top:24px; color:#9e9e9e; font-size:13px;">
+                    This link expires in 24 hours.
+                </p>
+            </div>
+            '''
         )
         message = "Invite sent successfully!"
-    
-    companies = Company.objects.all()   # ← outside the if block
+
+    companies = Company.objects.all()
     
     return render(request, 'superadmin_companies.html', {
         'message': message,
@@ -155,6 +172,7 @@ def signup_view(request, token):
                 company=invite.company,
                 employee_id=invite.employee_id,
                 job_title=invite.job_title,
+                department=invite.department,
             )
             invite.is_used = True
             invite.save()
@@ -195,6 +213,8 @@ def admin_employees(request):
         email=request.POST.get('email')
         employee_id=request.POST.get('employee_id')
         job_title=request.POST.get('job_title')
+        department_id=request.POST.get('department')
+        department=Department.objects.get(id=department_id)
         token=uuid.uuid4()
         expires_at=timezone.now() + timedelta(hours=24)
         InviteToken.objects.create(
@@ -205,19 +225,59 @@ def admin_employees(request):
             expires_at=expires_at,
             employee_id=employee_id,
             job_title=job_title,
+            department=department,
         )
         invite_link=f"http://127.0.0.1:8000/accounts/signup/{token}/"
         send_mail(
-            'You are invited to Join Leave Tracker',
-            f'Click the link to sign up: {invite_link}',
-            'rahulharidaas@gmail.com',
-            [email],
+            subject='You are invited to Join Leave Tracker',
+            message=f'Click the link to sign up: {invite_link}',
+            from_email='rahulharidaas@gmail.com',
+            recipient_list=[email],
+            html_message=f'''
+            <div style="font-family:Arial; max-width:480px; margin:auto; padding:32px; text-align:center">
+                <h2>You are Invited!</h2>
+                <p>You have been invited to join <strong>Leave Tracker</strong> as an employee.</p>
+                <p>Click the button below to create your account:</p>
+                <a href="{invite_link}"
+                   style="display:inline-block; padding:14px 28px; background:#1a1a1a;
+                          color:white; text-decoration:none; border-radius:50px;
+                          font-weight:600; margin-top:16px;">
+                    JOIN
+                </a>
+                <p style="margin-top:24px; color:#9e9e9e; font-size:13px;">
+                    This link expires in 24 hours.
+                </p>
+            </div>
+            '''
         )
         message = "Invite sent successfully!"
     employees=UserProfile.objects.filter(company=company,role='employee')
+    departments=Department.objects.filter(company=company)
 
     return render(request, 'admin_employees.html',{
         'company': company,
         'employees': employees,
-        'message':message,
+        'message': message,
+        'departments': departments,
     })
+
+def admin_department(request):
+    message = ""
+    profile = UserProfile.objects.get(user=request.user)
+    company = profile.company
+
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        Department.objects.create(name=name, company=company)
+        return redirect('admin_department')
+
+    departments = Department.objects.filter(company=company).annotate(emp_count=Count('userprofile'))
+
+    return render(request, 'admin_department.html', {
+        'message': message,
+        'departments': departments,
+        'company': company,
+    })
+
+def admin_settings(request):
+    return render(request,'admin_settings.html',)

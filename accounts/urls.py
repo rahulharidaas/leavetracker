@@ -11,6 +11,8 @@ urlpatterns =[
     path('signup/<uuid:token>/', views.signup_view, name='signup'),
     path('admin/dashboard/', views.admin_dashboard, name='admin_dashboard'),
     path('admin/employees/', views.admin_employees, name='admin_employees'),
+    path('admin/department/', views.admin_department, name='admin_department'),
+    path('admin/settings/', views.admin_settings, name='admin_settings'),
 
 
 
