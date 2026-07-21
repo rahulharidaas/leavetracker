@@ -104,3 +104,32 @@ This project uses Gmail SMTP for sending invite emails. Make sure to:
 - [ ] Leave types & balance
 - [ ] Leave requests & approvals
 - [ ] Employee Dashboard
+
+
+## Steps To Follow
+
+Phase 1 — Setup
+
+Install Python & VS Code
+Install Django — pip install django
+Create project — django-admin startproject leavetracker
+Create app — python manage.py startapp accounts
+Phase 2 — Models
+5. Create models — Company, Department, UserProfile, InviteToken
+6. Run migrations
+
+Phase 3 — Auth
+7. Login / Logout views
+8. Role-based redirect
+
+Phase 4 — Super Admin
+9. Super Admin dashboard
+10. Companies page + invite flow
+
+Phase 5 — Admin
+11. Admin dashboard
+12. Employees page + invite flow
+
+Phase 6 — Signup
+13. Two-step admin signup
+14. Employee signup
